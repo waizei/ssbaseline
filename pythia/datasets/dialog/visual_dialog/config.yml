@@ -10,7 +10,7 @@ task_attributes:
   image_feat_test:
   - /checkpoint02/tinayujiang/features/visdial/detectron_23/fc6/
   image_feat_train:
-  - detec/detectron/fc6/vqa/train+val2014
+  - detectron/detectron/fc6/vqa/train+val2014
   image_feat_val:
   - /checkpoint02/tinayujiang/features/visdial/detectron_23/fc6/
   image_max_loc: 100
@@ -56,8 +56,8 @@ model_attributes:
     image_feature_encodings:
     - type: finetune_faster_rcnn_fpn_fc7
       params:
-        bias_file: detec/detectron/fc6/fc7_b.pkl
-        weights_file: detec/detectron/fc6/fc7_w.pkl
+        bias_file: detectron/detectron/fc6/fc7_b.pkl
+        weights_file: detectron/detectron/fc6/fc7_w.pkl
     modal_combine:
       type: non_linear_element_multiply
       params:
