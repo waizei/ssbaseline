@@ -69,7 +69,7 @@ class FeatureExtractor:
         )
         parser.add_argument(
             "--confidence_threshold", type=float, default=0,
-            help="Threshold of detection confidence above which boxes will be selected"
+            help="Threshold of detectron confidence above which boxes will be selected"
         )
         parser.add_argument(
             "--background", action="store_true",

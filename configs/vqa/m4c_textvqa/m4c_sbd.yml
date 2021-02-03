@@ -61,7 +61,7 @@ model_attributes:
       dropout_prob: 0.1
     mmt:
       hidden_size: 768
-      num_hidden_layers: 8
+      num_hidden_layers: 4
     classifier:
       type: linear
       ocr_max_num: 50
@@ -71,6 +71,28 @@ model_attributes:
       params: {}
     text_embeddings:
       type: attention_two
+      params:
+        hidden_dim: 768
+        num_layers: 1
+        conv1_out: 512
+        conv2_out: 2
+        dropout: 0
+        embedding_dim: 768
+        kernel_size: 1
+        padding: 0
+    obj_embeddings:
+      type: attention
+      params:
+        hidden_dim: 768
+        num_layers: 1
+        conv1_out: 512
+        conv2_out: 2
+        dropout: 0
+        embedding_dim: 768
+        kernel_size: 1
+        padding: 0
+    ocr_embeddings:
+      type: attention
       params:
         hidden_dim: 768
         num_layers: 1
@@ -115,7 +137,7 @@ training_parameters:
     warmup_factor: 0.2
     warmup_iterations: 1000
     max_iterations: 34000
-    batch_size: 128
+    batch_size: 2
     num_workers: 2
     task_size_proportional_sampling: true
     monitored_metric: m4c_textvqa/textvqa_accuracy

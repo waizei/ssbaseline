@@ -124,17 +124,17 @@ class AttentionTextEmbedding(nn.Module):
 
         self.text_out_dim = hidden_dim * kwargs["conv2_out"]
 
-        bidirectional = kwargs.get("bidirectional", False)
-
-        self.recurrent_unit = nn.LSTM(
-            input_size=embedding_dim,
-            hidden_size=hidden_dim // 2 if bidirectional else hidden_dim,
-            num_layers=num_layers,
-            batch_first=True,
-            bidirectional=bidirectional,
-        )
-
-        self.dropout = nn.Dropout(p=dropout)
+        # bidirectional = kwargs.get("bidirectional", False)
+        #
+        # self.recurrent_unit = nn.LSTM(
+        #     input_size=embedding_dim,
+        #     hidden_size=hidden_dim // 2 if bidirectional else hidden_dim,
+        #     num_layers=num_layers,
+        #     batch_first=True,
+        #     bidirectional=bidirectional,
+        # )
+        #
+        # self.dropout = nn.Dropout(p=dropout)
 
         conv1_out = kwargs["conv1_out"]
         conv2_out = kwargs["conv2_out"]
@@ -159,21 +159,21 @@ class AttentionTextEmbedding(nn.Module):
 
     def forward(self, x):
         batch_size = x.size(0)
-
-        self.recurrent_unit.flatten_parameters()
+        x_reshape = x.permute(0, 2, 1)  # N * hidden_dim * T
         # self.recurrent_unit.flatten_parameters()
-        lstm_out, _ = self.recurrent_unit(x)  # N * T * hidden_dim
-        lstm_drop = self.dropout(lstm_out)  # N * T * hidden_dim
-        lstm_reshape = lstm_drop.permute(0, 2, 1)  # N * hidden_dim * T
+        # # self.recurrent_unit.flatten_parameters()
+        # lstm_out, _ = self.recurrent_unit(x)  # N * T * hidden_dim
+        # lstm_drop = self.dropout(lstm_out)  # N * T * hidden_dim
+        # lstm_reshape = lstm_drop.permute(0, 2, 1)  # N * hidden_dim * T
 
-        qatt_conv1 = self.conv1(lstm_reshape)  # N x conv1_out x T
+        qatt_conv1 = self.conv1(x_reshape)  # N x conv1_out x T
         qatt_relu = self.relu(qatt_conv1)
         qatt_conv2 = self.conv2(qatt_relu)  # N x conv2_out x T
 
         # Over last dim
         qtt_softmax = nn.functional.softmax(qatt_conv2, dim=2)
         # N * conv2_out * hidden_dim
-        qtt_feature = torch.bmm(qtt_softmax, lstm_drop)
+        qtt_feature = torch.bmm(qtt_softmax, x)
         # N * (conv2_out * hidden_dim)
         qtt_feature_concat = qtt_feature.view(batch_size, -1)
 
